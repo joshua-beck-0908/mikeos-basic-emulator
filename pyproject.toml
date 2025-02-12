@@ -1,0 +1,17 @@
+[project]
+name = "mikeos-basic-emulator"
+version = "0.1.0"
+description = ""
+dependencies = [ "toml",]
+requires-python = ">=3.11"
+readme = "README.md"
+[[project.authors]]
+name = "Joshua Beck"
+email = "joshua.beck.0908@gmail.com"
+
+[build-system]
+requires = [ "setuptools",]
+build-backend = "setuptools.build_meta"
+
+[project.license]
+text = "MIT"

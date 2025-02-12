@@ -1,0 +1,9 @@
+build==1.0.3
+dmenu==0.2.1
+iniconfig==2.0.0
+packaging==23.2
+pluggy==1.4.0
+pyproject_hooks==1.0.0
+pytest==8.0.0
+readchar==4.0.5
+toml==0.10.2
