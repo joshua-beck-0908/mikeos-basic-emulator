@@ -2,7 +2,9 @@
 # This file ensures other parts can communicate with each other.
 
 from pathlib import Path
+import time
 import typing
+
 if typing.TYPE_CHECKING:
     from runcmd import CommandRunner
     from arglist import CommandArgumentList
@@ -14,6 +16,8 @@ from backend.pygame.display import PygameTextDisplay
 #from backend.ncurses.display import CursesTextDisplay
 from debugger import Debugger
 from filesystem import SFNDirectory
+from serialport import SerialPort
+from sound import Speaker
 
 
 
@@ -32,6 +36,8 @@ class Environment():
         self.display: TextDisplay = PygameTextDisplay(
             self.variables, self.debugger)
         self.filesystem = SFNDirectory(Path('virtual_disk'), self.memory)
+        self.serial_port = SerialPort('NULL')
+        self.speaker = Speaker()
         self.program_size = 0
         self.command_runner: CommandRunner|None = None
         self.do_stack: list[int] = []
@@ -52,3 +58,9 @@ class Environment():
             raise ValueError('Command runner is not set.')
         return self.command_runner
         
+    def delay(self, seconds: float) -> None:
+        intervals = seconds * 20
+        for _ in range(int(intervals)):
+            time.sleep(0.05)
+            if self.display.has_exited():
+                raise SystemExit

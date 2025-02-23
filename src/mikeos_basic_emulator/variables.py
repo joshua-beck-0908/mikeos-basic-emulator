@@ -175,9 +175,10 @@ class VariableManager:
         """
         progbase = DEFAULT_LOAD_POINT
         progsize = self.get_runtime_variable('prog_size')
-        loc = self.memory.find_string(f'{label}:', 
-            progbase, progbase + progsize)
-        if loc == -1:
+        try:
+            loc = self.memory.find_string(f'{label}:', 
+                progbase, progbase + progsize)
+        except ValueError:
             raise UndefinedLabelError(f'Invalid label: {label}')
         else:
             return loc

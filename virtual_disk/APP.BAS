@@ -1,4 +1,8 @@
 PRINT "Running"
-FOR X = 1 TO 10000
-    Y = X + 1
-NEXT X
+for i = 1 to 10
+    f = i * 500
+    PRINT f
+    SOUND f 10
+next i
+WAITKEY K
+END
