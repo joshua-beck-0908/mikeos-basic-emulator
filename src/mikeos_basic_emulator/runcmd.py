@@ -16,6 +16,7 @@ from instructions.disk import all_commands as disk_commands
 from instructions.string import all_commands as string_commands
 from instructions.key import all_commands as key_commands
 from instructions.hardware import all_commands as hardware_commands
+from instructions.data import all_commands as data_commands
 
 
 all_commands: list[dict[str, CommandRoutine]] = [
@@ -26,6 +27,7 @@ all_commands: list[dict[str, CommandRoutine]] = [
     string_commands,
     key_commands,
     hardware_commands,
+    data_commands,
 ]
 
 class InterpreterSyntaxError(Exception):

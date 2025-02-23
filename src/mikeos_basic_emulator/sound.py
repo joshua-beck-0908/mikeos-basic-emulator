@@ -3,19 +3,22 @@
 from typing import NewType
 import numpy as np
 from numpy.typing import NDArray
-# TODO: Stop using simpleaudio, it's unmaintained and causes a segfault.
-# Is there any cross-platform alternative?
-import simpleaudio as audio
+
+# sounddevice depends on PortAudio.
+# This should be automatically install with the pip package on Windows and OS X.
+# Unfortunately, on Linux, you may need to install it manually.
+# On Debian/Ubuntu, you can install it with:
+# sudo apt install portaudio19-dev
+# On other distros I have no idea, please don't ask me.
+import sounddevice as audio
 
 AudioBuffer = NewType('AudioBuffer', NDArray[np.int16])
-AudioTracker = audio.PlayObject
 
 
 
 class Speaker:
     def __init__(self) -> None:
         self.buffer: None|AudioBuffer = None
-        self.sound_tracker: None|AudioTracker = None
         self.sample_rate = 44100
         self.channels = 1
         self.sample_width = 2
@@ -23,29 +26,11 @@ class Speaker:
         
     def play_tone(self, frequency: int, duration: float) -> None:
         wav = self.create_wave(frequency, duration)
-        self.sound_tracker = self.play_wave(wav)
+        audio.play(wav, self.sample_rate)
 
         
-    def play_wave(self, buffer: AudioBuffer) -> AudioTracker:
-        # Start playing the buffer with simpleaudio.
-        # Note this function will return immediately.
-        tracker = audio.play_buffer(
-            buffer, 
-            self.channels,
-            self.sample_width,
-            self.sample_rate,
-        )
-        return tracker
-        
-    def is_sound_finished(self) -> bool:
-        if self.sound_tracker is None:
-            return True
-        else:
-            return self.sound_tracker.is_playing()
-        
     def stop(self) -> None:
-        if self.sound_tracker is not None:
-            self.sound_tracker.stop()
+        audio.stop()
 
         
     def create_wave(self, frequency: int, duration: float) -> AudioBuffer:

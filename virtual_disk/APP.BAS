@@ -1,8 +1,8 @@
-PRINT "Running"
-for i = 1 to 10
-    f = i * 500
-    PRINT f
-    SOUND f 10
-next i
+PRINT CHR 219
 WAITKEY K
+PRINT K
+PAUSE 30
+GETKEY K
+PRINT K
+PAUSE 30
 END

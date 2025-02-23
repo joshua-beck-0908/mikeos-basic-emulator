@@ -104,6 +104,9 @@ def cmd_next(args: CommandArgumentList, env: Environment) -> None:
         else:
             env.next_line_address = for_var.get_loop_start_position()
             
+def cmd_pause(args: CommandArgumentList, env: Environment) -> None:
+    seconds = args.get_numeric() / 10
+    env.delay(seconds)
     
 def cmd_return(args: CommandArgumentList, env: Environment) -> None:
     if len(env.gosub_stack) == 0:
@@ -127,5 +130,6 @@ all_commands = {
     'INCLUDE': cmd_include,
     'LOOP': cmd_loop,
     'NEXT': cmd_next,
+    'PAUSE': cmd_pause,
     'RETURN': cmd_return,
 }

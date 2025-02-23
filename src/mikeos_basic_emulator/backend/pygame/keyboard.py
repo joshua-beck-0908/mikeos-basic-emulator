@@ -44,7 +44,7 @@ class Keyboard:
             
     def read_char(self, is_blocking: bool = True) -> int:
         key = 0
-        while is_blocking and key == 0:
+        while key == 0:
             try:
                 key = self.key_queue.get(block=is_blocking, timeout=0.1)
                 self.key_queue.task_done()
@@ -52,6 +52,8 @@ class Keyboard:
                 key = 0
             if self.display.has_exited():
                 raise SystemExit
+            if not is_blocking:
+                return key
         return key
 
         

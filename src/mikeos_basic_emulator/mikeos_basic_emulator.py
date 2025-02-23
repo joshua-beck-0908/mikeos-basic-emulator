@@ -15,7 +15,8 @@ def main():
     env = Environment()
     cmdqueue = setup_interpreter(env)
     display_preamble(env)
-    load_program(cmdqueue, 'APP.BAS')
+    load_program(cmdqueue, 'EXAMPLE.BAS')
+    #load_program(cmdqueue, 'APP.BAS')
     try:
         while not (env.display.has_exited() or env.debugger.finished):
             env.display.handle_events()

@@ -81,6 +81,12 @@ class CommandArgumentList:
         Consume the argument without returning it.
         """
         self.index += 1
+        
+    def reuse(self) -> None:
+        """
+        Undo the last argument consumption.
+        """
+        self.index -= 1
 
     def syntax_error(self, message: str = 'Syntax Error') -> None:
         raise ArgumentError(message)
@@ -204,6 +210,19 @@ class CommandArgumentList:
         self.index += 1
         return arg.to_program_pointer()
 
+    def get_label_and_pointer(self) -> tuple[str, int]:
+        """
+        Consume the next argument and return it as a label and program pointer.
+
+        This is for when the text of the label is needed as well as its address.
+        """
+        
+        self.assume_argument_exists()
+        arg = self.args[self.index]
+        self.index += 1
+        return arg.to_label_and_pointer()
+        
+    
     def get_specific_symbol(self, symbol: str) -> None:
         """
         Consume the next argument and check if it is a specific symbol.
@@ -392,6 +411,28 @@ class CommandArgumentList:
         return False
 
     
+    def has_word_from_list(self, words: list[str]) -> bool:
+        """
+        Check if the next argument is a word and is in the given list.
+
+        This is for when the syntax can accept multiple words or another type.
+        """
+
+        if self.does_argument_exist() and self.has_word():
+            return self.args[self.index].to_word() in words
+        return False
+    
+    def has_symbol_from_list(self, symbols: list[str]) -> bool:
+        """
+        Check if the next argument is a symbol and is in the given list.
+
+        This is for when the syntax can accept multiple symbols or another type.
+        """
+
+        if self.does_argument_exist() and self.has_symbol():
+            return self.args[self.index].to_symbol() in symbols
+        return False
+
     def check_condition(self) -> bool:
         """
         Evaluates a condition in the following arguments.

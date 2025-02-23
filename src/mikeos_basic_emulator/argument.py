@@ -73,7 +73,7 @@ class CommandArgument:
             return self.variables.get_string_variable_pointer(
                 self.token.value[1:])
         elif self.token.type == TokenType.CHAR:
-            return ord(self.token.value[1])
+            return self.token.value[1].encode('cp437')[0]
         elif self.token.type == TokenType.WORD:
             if self.keywords.is_valid_keyword(self.token.value):
                 return self.keywords.get_keyword_value(self.token.value)
@@ -131,7 +131,7 @@ class CommandArgument:
         - Any other token type will raise a TokenTypeError.
         """
         if self.token.type == TokenType.WORD:
-            return self.token.value
+            return self.token.value.upper()
         else:
             raise TokenTypeError('Expected word token')
         
@@ -167,6 +167,26 @@ class CommandArgument:
                 return self.variables.get_label_pointer(self.token.value)
         else:
             raise TokenTypeError('Expected label token')
+        
+    def to_label_and_pointer(self) -> tuple[str, int]:
+        """
+        Interprets the current token as a label and program pointer.
+        - For a label, the label name and address will be returned.
+        - For a word, the same as above.
+        - Any other token type will raise a TokenTypeError.
+        
+        The name and address are returned as a tuple in that order.
+        """
+        
+        # We can reused the to_program_pointer method here.
+        # But a keyword is not a valid label, so we need to check for that.
+        if self.token.type == TokenType.WORD and \
+        self.keywords.is_valid_keyword(self.token.value):
+                raise TokenTypeError('Expected label token')
+        else:
+            return (self.token.value, self.to_program_pointer())
+            
+
 
     def is_valid_string(self) -> bool:
         """

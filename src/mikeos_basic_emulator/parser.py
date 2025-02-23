@@ -53,11 +53,15 @@ class CommandParser:
         word = ''
         in_quote = False
         in_char = False
+        in_comment = False
         include_next = False
         for char in line:
             # Windows adds a carriage return at the end of the line.
             if char == '\r':
                 continue
+            # If we're in a comment, just add the rest of the line as a token.
+            elif in_comment:
+                word += char
             # Is it the start or end of a quote?
             elif char == '"':
                 word += char
@@ -99,8 +103,13 @@ class CommandParser:
                 if include_next:
                     continue
                 else:
-                    output.append(word)
-                    word = ''
+                    if len(output) == 0 and word.upper() == 'REM':
+                        # Do not try to parse a comment.
+                        word += char
+                        in_comment = True
+                    else:
+                        output.append(word)
+                        word = ''
             # If it's alphanumeric, continue the word.
             # The parser will later decide if it's valid and what type it is.
             elif char.isalnum() or include_next:
@@ -144,7 +153,7 @@ class CommandParser:
             if len(token) == 1:
                 return self.as_numeric_variable(token)
             # If it has the command REM, it's a comment.
-            elif token.upper() == 'REM':
+            elif token.upper().startswith('REM '):
                 return Token(TokenType.COMMENT, '')
             # If it ends with a colon, it's a label.
             elif token[-1] == ':':
@@ -183,7 +192,7 @@ class CommandParser:
 
     def as_word(self, token: str) -> Token:
         if token.isalpha():
-            return Token(TokenType.WORD, token.upper())
+            return Token(TokenType.WORD, token)
         else:
             raise DecodingError(f'Invalid word token: "{token}"')
         

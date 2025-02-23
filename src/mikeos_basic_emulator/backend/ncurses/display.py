@@ -102,7 +102,6 @@ class CursesTextDisplay(TextDisplay):
         
 
     def input_string(self, prompt: str = '') -> str:
-        #return self.stdscr.getstr().decode('ascii', errors='replace')
         if prompt != '':
             self.print(prompt)
         output = ''

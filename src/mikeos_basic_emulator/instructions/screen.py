@@ -13,7 +13,11 @@ def cmd_print(args: CommandArgumentList, env: Environment) -> None:
     elif args.has_word():
         keyword = args.get_word_from_list(['CHR', 'HEX'])
         if keyword == 'CHR':
-            env.display.print(chr(args.get_numeric()))
+            # You cannot use the Python chr() function.
+            # This will decode to unicode, not CP437.
+            value = args.get_numeric() % 256
+            character = value.to_bytes().decode('cp437')
+            env.display.print(character)
         elif keyword == 'HEX':
             value = hex(args.get_numeric()) % 256
             env.display.print(f'{value:02X}')
@@ -35,7 +39,7 @@ def cmd_cursor(args: CommandArgumentList, env: Environment) -> None:
         
 def cmd_curschar(args: CommandArgumentList, env: Environment) -> None:
     char = env.display.get_character_at_cursor()
-    args.set_numeric_variable(ord(char))
+    args.set_numeric_variable(char.encode('cp437')[0])
     
 def cmd_curscol(args: CommandArgumentList, env: Environment) -> None:
     colour = env.display.get_character_colour_at_cursor()

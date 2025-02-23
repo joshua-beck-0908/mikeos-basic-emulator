@@ -48,6 +48,7 @@ class Environment():
         self.program_finished = False
         self.next_line_address = 0
         self.last_if_true = True
+        self.read_blocks: dict[str, list[int]] = {}
         self.next_command: CommandArgumentList|None = None
 
     def set_command_runner(self, command_runner: 'CommandRunner') -> None:
