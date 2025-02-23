@@ -6,14 +6,16 @@ from constants import (
     DEFAULT_LOAD_POINT, 
     DEFAULT_STRING_VARIABLES_LOCATION
 )
+from debugger import Debugger
 from parser import Token, TokenType
 from argument import CommandArgument, TokenTypeError
 from variables import VariableManager
 from memory import Memory
 
 memory = Memory()
+debugger = Debugger()
 memory.write_string(DEFAULT_LOAD_POINT, 'TEST:')
-variables = VariableManager(memory)
+variables = VariableManager(memory, debugger)
 variables.set_runtime_variable('prog_size', 5)
 
 def test_numeric_argument_with_number() -> None:
@@ -26,6 +28,11 @@ def test_numeric_argument_with_variable() -> None:
     token = Token(TokenType.VARIABLE, 'A')
     arg = CommandArgument(token, variables)
     assert arg.to_numeric() == 123
+    
+def test_numeric_argument_with_quoted_char() -> None:
+    token = Token(TokenType.CHAR, "'A'")
+    arg = CommandArgument(token, variables)
+    assert arg.to_numeric() == 65
     
 def test_numeric_argument_with_keyword() -> None:
     token = Token(TokenType.WORD, 'PROGSTART')
@@ -112,7 +119,7 @@ def test_symbol_argument_with_invalid_token() -> None:
         arg.to_symbol()
         
 def test_program_pointer_with_label() -> None:
-    token = Token(TokenType.LABEL, 'TEST:')
+    token = Token(TokenType.WORD, 'TEST')
     arg = CommandArgument(token, variables)
     assert arg.to_program_pointer() == DEFAULT_LOAD_POINT
 

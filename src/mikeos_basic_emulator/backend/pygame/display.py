@@ -9,7 +9,7 @@ import pygame
 from pygame.font import Font
 
 from backend.interface.display import GraphicTextDisplay
-from backend.interface.dialog import DialogBox, Listbox
+from backend.interface.dialog import DialogBox, FileSelector, Listbox
 from constants import (
     DEFAULT_BACKGROUND_COLOUR,
     DEFAULT_CHARACTER_HEIGHT,
@@ -29,6 +29,7 @@ from backend.pygame.cursor import Cursor
 from backend.pygame.keyboard import Keyboard
 from backend.pygame.character import TextCharacter
 from debugger import Debugger
+from filesystem import SFNDirectory
 from variables import VariableManager
 
 VGA_FONT_PATH = Path('uni_vga/u_vga16.bdf')
@@ -110,8 +111,15 @@ class PygameTextDisplay(GraphicTextDisplay):
         self.cursor.advance()
         
     def scroll(self) -> None:
-        # TODO: Implement scrolling
-        pass
+        for y in range(1, self.lines):
+            for x in range(self.columns):
+                self.get_cell(Position(x, y - 1)).copy_from(
+                    self.get_cell(Position(x, y))
+                )
+        for x in range(self.columns):
+            self.get_cell(Position(x, self.lines - 1)).set_char_and_colour(
+                ' ', self.default_colour
+            )
     
     def show_cursor(self) -> None:
         self.cursor_visible = True
@@ -212,6 +220,9 @@ class PygameTextDisplay(GraphicTextDisplay):
         list_dialog.set_prompts(prompt_line_1, prompt_line_2)
         return list_dialog.run()
 
+    def show_file_dialog(self, filesystem: SFNDirectory) -> str:
+        file_dialog = FileSelector(self, self.variables, filesystem)
+        return file_dialog.run()
         
     def fill_area(self, 
         area: Area,

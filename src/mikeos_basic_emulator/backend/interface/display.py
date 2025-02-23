@@ -6,8 +6,9 @@ from backend.interface.colours import PalettePair
 from pygame.font import Font
 from pygame.surface import Surface
 
-from debugger import Debugger
+from filesystem import SFNDirectory
 from variables import VariableManager
+from debugger import Debugger
 
 class TextDisplay(ABC):
     @abstractmethod
@@ -117,8 +118,23 @@ class TextDisplay(ABC):
     ) -> int:
         """
         Shows a dialog box with a list of items.
+
         Returns the selected index starting from one.
+
         Zero is returned if the dialog was cancelled.
+        """
+        raise NotImplementedError
+    
+    @abstractmethod
+    def show_file_dialog(self, filesystem: SFNDirectory) -> str:
+        """
+        Shows a dialog box with a list of files.
+
+        Takes a filesystem object to list the files.
+
+        Returns the selected file name.
+
+        A blank string is returned if the dialog was cancelled.
         """
         raise NotImplementedError
     
@@ -135,6 +151,8 @@ class TextDisplay(ABC):
     def handle_events(self) -> None:
         """
         Called from the main thread to handle window events.
+        
+        Useful for backends that need to check an event queue.
         """
         raise NotImplementedError
     

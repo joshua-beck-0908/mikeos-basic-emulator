@@ -22,13 +22,14 @@ class Memory:
 
     def read_string(self, 
         address: int, 
-        limit: int = 127) -> str:
+        limit: int = 127,
+        terminator: int = 0) -> str:
 
         encoded = self.data[address:address + limit]
         # Check for null terminator.
         # If present before the limit, use it's position as the length.
-        if 0 in encoded:
-            length = encoded.index(0)
+        if terminator in encoded:
+            length = encoded.index(terminator)
         else:
             length = limit
         return encoded[:length].decode('ascii', 'replace')
@@ -45,6 +46,13 @@ class Memory:
         for i in range(address, address + length):
             print(f'{i:04x}: {self.data[i]:02x}')
             
+            
+    def read_line(self, address: int) -> str:
+        return self.read_string(address, 255, terminator=0x0A)
+    
+    def find_next_line(self, address: int) -> int:
+        return self.data.index(0x0A, address) + 1
+
     # Returns the index of the first occurrence of the string in memory.
     # If not found, returns -1.
     def find_string(self, 

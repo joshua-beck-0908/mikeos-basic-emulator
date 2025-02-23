@@ -15,72 +15,72 @@ memory = Memory()
 
 def test_sanitizer_uppercases() -> None:
     fname = SFNDirectory(test_dir, memory)
-    assert fname.sanitize_filename('test') == ('TEST', False)
+    assert fname._sanitize_filename('test') == ('TEST', False)
     
 def test_sanitizer_removes_spaces() -> None:
     fname = SFNDirectory(test_dir, memory)
-    assert fname.sanitize_filename('test test') == ('TESTTEST', False)
+    assert fname._sanitize_filename('test test') == ('TESTTEST', False)
     
 def test_sanitizer_removes_leading_spaces() -> None:
     fname = SFNDirectory(test_dir, memory)
-    assert fname.sanitize_filename(' test') == ('TEST', False)
+    assert fname._sanitize_filename(' test') == ('TEST', False)
 
 def test_sanitizer_removes_leading_periods() -> None:
     fname = SFNDirectory(test_dir, memory)
-    assert fname.sanitize_filename('.test') == ('TEST', False)
+    assert fname._sanitize_filename('.test') == ('TEST', False)
 
 def test_sanitizer_removes_multiple_leading_periods() -> None:
     fname = SFNDirectory(test_dir, memory)
-    assert fname.sanitize_filename('...test') == ('TEST', False)
+    assert fname._sanitize_filename('...test') == ('TEST', False)
     
 def test_sanitizer_leaves_extension_period() -> None:
     fname = SFNDirectory(test_dir, memory)
-    assert fname.sanitize_filename('test.txt') == ('TEST.TXT', False)
+    assert fname._sanitize_filename('test.txt') == ('TEST.TXT', False)
     
 def test_sanitize_replaces_invalid_characters() -> None:
     fname = SFNDirectory(test_dir, memory)
-    assert fname.sanitize_filename('test*&') == ('TEST_&', True)
+    assert fname._sanitize_filename('test*&') == ('TEST_&', True)
     
 
 def test_get_basename() -> None:
     fname = SFNDirectory(test_dir, memory)
-    assert fname.get_basename('TEST.TXT') == ('TEST', False)
+    assert fname._get_basename('TEST.TXT') == ('TEST', False)
     
 def test_get_basename_at_limit() -> None:
     fname = SFNDirectory(test_dir, memory)
-    assert fname.get_basename('12345678.TXT') == ('12345678', False)
+    assert fname._get_basename('12345678.TXT') == ('12345678', False)
     
 def test_get_basename_too_long() -> None:
     fname = SFNDirectory(test_dir, memory)
-    assert fname.get_basename('123456789.TXT') == ('12345678', True)
+    assert fname._get_basename('123456789.TXT') == ('12345678', True)
 
 def test_get_extension() -> None:
     fname = SFNDirectory(test_dir, memory)
-    assert fname.get_extension('TEST.TXT') == '.TXT'
+    assert fname._get_extension('TEST.TXT') == '.TXT'
 
 def test_get_extension_with_no_extension() -> None:
     fname = SFNDirectory(test_dir, memory)
-    assert fname.get_extension('TEST') == ''
+    assert fname._get_extension('TEST') == ''
     
 def test_get_extension_with_no_extension2() -> None:
     fname = SFNDirectory(test_dir, memory)
-    assert fname.get_extension('TEST.') == ''
+    assert fname._get_extension('TEST.') == ''
     
 def test_get_extension_wtih_witout_basename() -> None:
     fname = SFNDirectory(test_dir, memory)
-    assert fname.get_extension('.TXT') == '.TXT'
+    assert fname._get_extension('.TXT') == '.TXT'
     
 def test_get_extension_with_short_extension() -> None:
     fname = SFNDirectory(test_dir, memory)
-    assert fname.get_extension('TEST.T') == '.T'
+    assert fname._get_extension('TEST.T') == '.T'
     
 def test_get_extension_with_long_extension() -> None:
     fname = SFNDirectory(test_dir, memory)
-    assert fname.get_extension('TEST.TEXT') == '.TEX'
+    assert fname._get_extension('TEST.TEXT') == '.TEX'
     
 def test_get_extension_with_multiple_extensions() -> None:
     fname = SFNDirectory(test_dir, memory)
-    assert fname.get_extension('TEST.TAR.GZ') == '.GZ'
+    assert fname._get_extension('TEST.TAR.GZ') == '.GZ'
     
 def test_read_files() -> None:
     fname = SFNDirectory(test_dir, memory)

@@ -1,5 +1,3 @@
-from itertools import zip_longest
-
 from arglist import CommandArgumentList, CommandRoutine
 from backend.interface.area import Position
 from backend.interface.colours import int_to_palette_pair, palette_pair_to_int
@@ -73,9 +71,11 @@ def cmd_alert(args: CommandArgumentList, env: Environment) -> None:
     env.display.show_alert_dialog(args.get_string())
     
 def cmd_listbox(args: CommandArgumentList, env: Environment) -> None:
-    env.display.show_list_dialog(
-        ['item 1', 'item 2', 'item 3'], 
-        'Select an item', '')
+    options = args.get_string().split(',')
+    prompt_1 = args.get_string()
+    prompt_2 = args.get_string()
+    result = env.display.show_list_dialog(options, prompt_1, prompt_2)
+    args.set_numeric_variable(result)
     
 def cmd_askfile(args: CommandArgumentList, env: Environment) -> None:
     files = env.filesystem.list_files()

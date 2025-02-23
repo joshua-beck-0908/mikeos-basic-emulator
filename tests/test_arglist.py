@@ -5,12 +5,14 @@ import pytest
 from arglist import CommandArgumentList
 from argument import ArgumentError, TokenTypeError
 from constants import DEFAULT_LOAD_POINT
+from debugger import Debugger
 from parser import Token, TokenType
 from variables import VariableManager
 from memory import Memory
 
 memory = Memory()
-variables = VariableManager(memory)
+debugger = Debugger()
+variables = VariableManager(memory, debugger)
 memory.write_string(DEFAULT_LOAD_POINT, 'TEST:')
 variables.set_runtime_variable('prog_size', 5)
 

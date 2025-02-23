@@ -1,8 +1,5 @@
-import pytest
-
 from environment import Environment
 from runcmd import CommandRunner
-from parser import CommandParser as Parser
 
 env = Environment()
 

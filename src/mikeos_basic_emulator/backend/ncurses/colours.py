@@ -10,8 +10,8 @@ palette_to_curses_colour = {
     Palette.RED: curses.COLOR_RED,
     Palette.MAGENTA: curses.COLOR_MAGENTA,
     Palette.BROWN: curses.COLOR_YELLOW,
-    Palette.LIGHT_GRAY: curses.COLOR_WHITE,
-    Palette.DARK_GRAY: curses.COLOR_BLACK,
+    Palette.LIGHT_GREY: curses.COLOR_WHITE,
+    Palette.DARK_GREY: curses.COLOR_BLACK,
     Palette.LIGHT_BLUE: curses.COLOR_BLUE,
     Palette.LIGHT_GREEN: curses.COLOR_GREEN,
     Palette.LIGHT_CYAN: curses.COLOR_CYAN,
@@ -29,7 +29,7 @@ curses_to_palette = {
     curses.COLOR_RED: Palette.RED,
     curses.COLOR_MAGENTA: Palette.MAGENTA,
     curses.COLOR_YELLOW: Palette.BROWN,
-    curses.COLOR_WHITE: Palette.LIGHT_GRAY
+    curses.COLOR_WHITE: Palette.LIGHT_GREY
 }
 
 curses_colours = [

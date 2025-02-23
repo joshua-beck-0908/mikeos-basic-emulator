@@ -6,12 +6,63 @@ from variables import VariableManager
 from environment import Environment
 
 class CommandArgumentList:
+    """
+    Represents a list of arguments in a command.
+    
+    Each command is passed a list of arguments to interpret.
+    The command will consume the arguments as needed.
+    
+    The class is built with a list of tokens and a variable manager instance.
+    The variable manager is used to fetch and set variable values if needed.
+
+    The values of the tokens may vary depending on which interpretation 
+    method is called.
+    
+    The types match those in the CommandArgument class.
+    - Numeric (get_numeric/has_numeric)
+    - String (get_string/has_string)
+    - Numeric Variable 
+        - (get_numeric_variable/has_numeric_variable/set_numeric_variable)
+    - String Variable
+        - (get_string_variable/has_string_variable/set_string_variable)
+    - Word (get_word/has_word/has_specific_word/get_word_from_list)
+    - Symbol (get_symbol/has_symbol/has_specific_symbol/get_symbol_from_list)
+    - Program Pointer (get_program_pointer)
+
+    The methods use the following pattern:
+    - get_x() will consume the next argument and return it as type x.
+        - Returns any variable or literal as type x.
+        - Useful for input arguments.
+        - A syntax error is raised if the argument cannot be interpreted as x.
+    - has_x() will check if the next argument can be interpreted as type x.
+        - Returns True if the next argument can be interpreted as x.
+        - Useful for commands with multiple argument types or optionals.
+        - Does not raise a syntax error if the argument is a different type.
+    - set_x() will consume the next argument and set it as type x.
+        - Will set the value of the argument to the next variable of type x.
+        - Useful for output arguments.
+        - A syntax error is raised if the argument an invalid type or literal.
+    - has_specific_x()
+        - Will check if the next argument is of type x AND is a specific value.
+        - Useful for commands that expect a specific symbol or keyword.
+    - has_x_from_list()
+        - Will check if the next argument is of type x AND is in a 
+        list of values.
+        - Useful for commands that have multiple subcommands or symbols.
+
+    """
+
+    
     def __init__(self, tokens: list[Token], vars: VariableManager) -> None:
+        self.tokens = tokens
         self.args = [CommandArgument(token, vars) for token in tokens]
         self.index = 0
         self.variables = vars
 
     def assume_argument_exists(self) -> None:
+        """
+        Raise a syntax error if the current argument does not exist.
+        """
         if self.index >= len(self.args):
             raise ArgumentError('Not enough arguments')
 
@@ -81,7 +132,7 @@ class CommandArgumentList:
         """
         Consume the next argument as a numeric variable and set it.
 
-        This is a shortcut if the next variable is an output.
+        Useful for output arguments.
         If the argument is not a numeric variable, 
         a syntax error will be raised.
         """
@@ -105,9 +156,10 @@ class CommandArgumentList:
     
     def set_string_variable(self, value: str) -> None:
         """
-        Consume the next argument as a string variable and set it.
+        Consume the next argument as a string variable and set it to the given
+        value.
 
-        This is a shortcut if the next variable is an output.
+        Useful for output arguments.
         If the argument is not a string variable, 
         a syntax error will be raised.
         """
@@ -328,6 +380,104 @@ class CommandArgumentList:
             return self.args[self.index].to_word() == word
         return False
     
+    def has_non_semantic(self) -> bool:
+        """
+        Check if the next argument is a non-semantic token.
+
+        This is for when the syntax can accept a non-semantic token.
+        """
+
+        if self.does_argument_exist():
+            return self.args[self.index].is_non_semantic()
+        return False
+
+    
+    def check_condition(self) -> bool:
+        """
+        Evaluates a condition in the following arguments.
+
+        All arguments related to the condition will be consumed.
+        
+        The following arguments should be:
+        - the first numeric value
+        - a comparison operator (a SYMBOL)
+        - the second numeric value
+
+        Valid comparison operators are:
+        - `=` (equal)
+        - `>` (greater than)
+        - `<` (less than)
+        - `!` (not equal)
+        """
+
+        value1 = self.get_numeric()
+        operator = self.get_symbol_from_list(['=', '>', '<', '!'])
+        value2 = self.get_numeric()
+
+        if operator == '=':
+            return value1 == value2
+        elif operator == '>':
+            return value1 > value2
+        elif operator == '<':
+            return value1 < value2
+        elif operator == '!':
+            return value1 != value2
+        else:
+            # This branch can't actually happen, but pylance doesn't know that.
+            return False
+        
+    def do_numeric_sum(self) -> int:
+        """
+        Perform a numeric sum operation.
+
+        This will consume all numeric values and operators in the arguments.
+        The result will be returned.
+        """
+
+        result = self.get_numeric()
+        while self.has_symbol():
+            operator = self.get_symbol_from_list(['+', '-', '*', '/', '%'])
+            value = self.get_numeric()
+
+            if operator == '+':
+                result += value
+            elif operator == '-':
+                result -= value
+            elif operator == '*':
+                result *= value
+            elif operator == '/':
+                result //= value
+            elif operator == '%':
+                result %= value
+
+        return result
+    
+    def do_string_building(self) -> str:
+        """
+        Perform string building operation.
+        e.g. '$1 + "Hello" + $2'
+
+        This will consume all string values and operators in the arguments.
+        The result will be returned.
+        """
+
+        result = self.get_string()
+        while self.has_symbol():
+            self.get_specific_symbol('+')
+            value = self.get_string()
+            result += value
+
+        return result
+    
+    def make_new_arglist_from_remaining(self) -> 'CommandArgumentList':
+        """
+        Create a new argument list from the remaining arguments.
+
+        This is useful for conditional commands.
+        """
+        
+        return CommandArgumentList(self.tokens[self.index:], self.variables)
+        
     
 
 CommandRoutine = Callable[[CommandArgumentList, Environment], None]

@@ -44,6 +44,15 @@ def test_invalid_quote():
     with pytest.raises(DecodingError):
         parser.decode_token('"test')
         
+def test_valid_char_literal():
+    parser = CommandParser()
+    assert parser.decode_token("'a'") == (TokenType.CHAR, "'a'")
+    
+def test_invalid_char_literal():
+    parser = CommandParser()
+    with pytest.raises(DecodingError):
+        parser.decode_token("'ab'")
+
 def test_letter_variable():
     parser = CommandParser()
     assert parser.decode_token('a') == (TokenType.VARIABLE, 'A')

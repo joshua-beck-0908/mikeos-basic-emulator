@@ -20,6 +20,7 @@ class TokenType(Enum):
     STRING_VAR = 7,
     STRING_VAR_REF = 8,
     LABEL = 9,
+    CHAR = 10,
 
 class Token(NamedTuple):
     type: TokenType
@@ -51,10 +52,14 @@ class CommandParser:
         output: list[str] = []
         word = ''
         in_quote = False
+        in_char = False
         include_next = False
         for char in line:
+            # Windows adds a carriage return at the end of the line.
+            if char == '\r':
+                continue
             # Is it the start or end of a quote?
-            if char == '"':
+            elif char == '"':
                 word += char
                 if in_quote:
                     output.append(word)
@@ -63,6 +68,18 @@ class CommandParser:
             # If we're continuing a quote ignore spaces and other boundries.
             elif in_quote:
                 word += char
+                
+            elif char == "'":
+                word += char
+                if in_char:
+                    output.append(word)
+                    word = ''
+                in_char = not in_char
+            elif in_char:
+                if len(word) > 2:
+                    raise DecodingError('Character literal too long')
+                word += char
+                
 
             # Different rules apply at the start of a word.
             elif len(word) == 0:
@@ -120,6 +137,8 @@ class CommandParser:
             return self.as_number(token)
         elif token.startswith('"'):
             return self.as_quote(token)
+        elif token.startswith("'"):
+            return self.as_char(token)
         elif token[0].isalpha():
             # Single letter words are variables.
             if len(token) == 1:
@@ -182,6 +201,12 @@ class CommandParser:
         if token[-1] == ':':
             return Token(TokenType.LABEL, token)
         raise DecodingError(f'Invalid label token: "{token}"')
+    
+    def as_char(self, token: str) -> Token:
+        if token.startswith("'") and token.endswith("'") and len(token) == 3:
+            return Token(TokenType.CHAR, token)
+        else:
+            raise DecodingError(f'Invalid character token: "{token}"')
 
 
 

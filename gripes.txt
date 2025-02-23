@@ -1,0 +1,11 @@
+Current language issues:
+ * No IF blocks.
+    * Would need an ENDIF command.
+    * Would need IF/ELSE modifications.
+ * Types accepted are inconsistant.
+    * A secondary layer like we have here for 'get_x' would help.
+    * TachyonOS already did this? Can we use that?
+ * No way to do bracketed sums/strings.
+    * Would need to implement recursion in the parser.
+    * Should the same brackets be used for both?
+    

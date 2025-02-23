@@ -1,0 +1,92 @@
+# This are the default values for the MikeOS BASIC emulator.
+# It attempts to mimic the behavior of the original MikeOS BASIC interpreter.
+# The values can be changed to suit your needs.
+# See the 'constants.py' file for more information on each setting.
+
+# There's nothing stopping you from changing the colour scheme.
+# Or making the font size bigger.
+# Or adding two hundred characters per line.
+# Or even changing the font to Comic Sans.
+
+# Memory settings
+[memory]
+# The location within the simulated memory to load programs
+load_point = 0x8000
+# The location within the simulated memory to store numeric variables
+numeric_variables_location = 0x4000
+# The location within the simulated memory to store string variables
+string_variables_location = 0x4100
+
+# Emulation settings
+[emulation]
+# The MikeOS API version that is emulated
+mikeos_version = 18
+# The MikeOS version string that is emulated
+mikeos_version_string = "4.7.0"
+# List of available commands (not implemented in the emulator)
+commands = ["DIR", "LS", "COPY", "REN", "DEL", "CAT", "SIZE", "CLS", "HELP", "TIME", "DATE", "VER", "EXIT"]
+
+# Display settings
+[display]
+# The number of columns in the text display
+columns = 80
+# The number of rows in the text display
+lines = 25
+# The pixel width of each character in the text display
+character_width = 9
+# The pixel height of each character in the text display
+character_height = 16
+# The maximum length of a string variable in the emulator
+string_length = 127
+# The default colour of text cells in the display.
+background_colour = "LIGHT_GREY, BLACK"
+# The default print colour if not changed or otherwise specified.
+print_colour = "LIGHT_GREY, BLACK"
+
+
+# Cursor settings
+[cursor]
+# The blinking rate of the text cursor (seconds between on/off)
+blink_interval = 0.5
+# If the cursor should be visible by default
+visibility = true
+# If the text cursor should blink by default
+blink = true
+# The height of the text mode cursor (drawn as a block from the bottom)
+height = 2
+
+# Dialog box settings
+[dialog]
+# The outside colour of OS dialog boxes by default
+outer_colour = "WHITE, RED"
+# The inner colour used for buttons and text in OS dialog boxes
+inner_colour = "BLACK, WHITE"
+# The colour used for the selected item in OS dialog boxes
+selector_colour = "WHITE, BLACK"
+
+# List dialog settings
+[list_dialog]
+# The default width of a list dialog box
+width = 40
+# The default height of a list dialog box
+height = 21
+# The default x position (column) of a list dialog box
+x = 20
+# The default y position (row) of a list dialog box
+y = 2
+
+# Message dialog settings
+[message_dialog]
+# The default width of a message dialog box
+width = 42
+# The default height of a message dialog box
+height = 7
+# The default x position (column) of a message dialog box
+x = 19
+# The default y position (row) of a message dialog box
+y = 9
+
+# Window settings
+[window]
+# The title of the window to use for graphical backends
+title = "MikeOS Basic Emulator"

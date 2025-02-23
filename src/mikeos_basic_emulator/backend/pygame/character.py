@@ -24,6 +24,13 @@ class TextCharacter:
         self.cursor_height = 0
         self.render()
 
+    def copy_from(self, other: 'TextCharacter') -> None:
+        self.char = other.char
+        self.colour = other.colour
+        self.rgb = other.rgb
+        self.needs_render = True
+        #self.render()
+
     def get_char(self) -> str:
         return self.char
     

@@ -10,9 +10,22 @@ from constants import (
     DEFAULT_MESSAGE_DIALOG_X,
     DEFAULT_MESSAGE_DIALOG_Y
 )
+from filesystem import SFNDirectory
 from variables import VariableManager
 
 class Listbox:
+    """
+    A list dialog box roughly equivalent to os_list_dialog.
+
+    An object is created with a display and variables reference.
+    
+    Should run on any display backend.
+
+    It can be populated with the set_items method, which takes a list of
+    strings to display in the list.
+
+    The set_prompts method sets the two lines of text at the top of the dialog.
+    """
     def __init__(self, display: TextDisplay, 
                 variables: VariableManager) -> None:
         self.display = display
@@ -161,8 +174,9 @@ class DialogBox:
                 self.box_area.start.col + 1,
                 self.box_area.start.row + 1
         ))
-        self.display.print(self.message, self.inner_colour)
+        self.display.print(self.message, self.box_colour)
         self.display.move_cursor(self.button_position)
+        self.display.print(self.button, self.inner_colour)
 
     def run(self) -> None:
         self.display.hide_cursor()
@@ -170,3 +184,40 @@ class DialogBox:
         while self.display.read_char() != 13:
             pass
         self.display.show_cursor()
+
+class FileSelector:
+    """
+    A file selector dialog roughly equivalent to os_file_selector.
+    
+    A file selector is created with a display, variables and filesystem
+    reference. These should all be in the environment.
+    
+    A filename will be returns or an empty string if the user cancels.
+    """
+    def __init__(self, display: TextDisplay,
+                variables: VariableManager,
+                filesystem: SFNDirectory) -> None:
+        self.listbox = Listbox(display, variables)
+        self.filesystem = filesystem
+        
+        # Set the generic file selection prompts.
+        self.listbox.set_prompts(
+            'Please select a file using the cursor',
+            'keys from the list below...'
+        )
+
+    def run(self) -> str:
+        # Refresh the filesystem.
+        self.filesystem.read_files()
+        
+        # Get a list of files and put them into the listbox.
+        files = self.filesystem.list_files()
+        self.listbox.set_items(files)
+        selection = self.listbox.run()
+
+        # Convert the selection into a filename.
+        if selection > 0:
+            return files[selection - 1]
+        else:
+            return ''
+        
